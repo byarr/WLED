@@ -62,7 +62,7 @@ void writeTmntLogo1() {
 
 typedef void(*DrawFunction)();
 DrawFunction drawFunctions[] = {&writeDylan, &writeTurtleNames, &writeTeenageMutantNinjaTurtles, &writeMeatSweats, &writeTmntLogo1};
-int functionIdx = 0;
+int lastFunctionIdx = -1;
 
 
 // gets called once at boot. Do all initialization that doesn't depend on
@@ -95,9 +95,13 @@ void userLoop() {
   u8x8.clear();
   
   int num_funcs = sizeof(drawFunctions)/sizeof(drawFunctions[0]);
-  int functionIdx = random8(num_funcs);
-
+  int functionIdx;
+  do {
+      functionIdx = random8(num_funcs);
+  } while (functionIdx == lastFunctionIdx);
+  
   (*drawFunctions[functionIdx])();
+  lastFunctionIdx = functionIdx;
 }
 
 
