@@ -52,13 +52,16 @@ void writeMeatSweats() {
 }
 
 
-void writeTMNT() {
-  u8x8.setFont(u8x8_font_lucasarts_scumm_subtitle_o_2x2_r);
-  u8x8.drawString(0, 0, "TMNT");
+
+void writeTmntLogo1() {
+    uint8_t tile_0[40] = { 0x03,0x05,0x09,0x09,0xF9,0x01,0x01,0xF9,0x09,0xF9,0x05,0x03,0xC2,0x84,0x08,0x84,0xC2,0x01,0x01,0xFF,0x01,0x02,0xC4,0x88,0x1F,0x03,0x05,0xF9,0x09,0xF9,0x01,0x01,0xF9,0x09,0x09,0x05,0x03,0x00,0x00,0x00};
+    u8x8.drawTile(5, 1, 5, tile_0);
+    uint8_t tile_1[40] = { 0x00,0x00,0x00,0x00,0x03,0x02,0x02,0x03,0x00,0x03,0x02,0x02,0x03,0x00,0x01,0x00,0x03,0x04,0x08,0x1F,0x08,0x04,0x03,0x00,0x01,0x02,0x02,0x03,0x00,0x03,0x02,0x02,0x03,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+    u8x8.drawTile(5, 2, 5, tile_1);
 }
 
 typedef void(*DrawFunction)();
-DrawFunction drawFunctions[] = {&writeDylan, &writeTurtleNames, &writeTeenageMutantNinjaTurtles, &writeMeatSweats, &writeTMNT};
+DrawFunction drawFunctions[] = {&writeDylan, &writeTurtleNames, &writeTeenageMutantNinjaTurtles, &writeMeatSweats, &writeTmntLogo1};
 int functionIdx = 0;
 
 
@@ -82,19 +85,19 @@ long lastUpdate = 0;
 
 void userLoop() {
 
+   long now = millis();
   // Check if we time interval for redrawing passes.
-  if (millis() - lastUpdate < USER_LOOP_REFRESH_RATE_MS) {
+  if (now - lastUpdate < USER_LOOP_REFRESH_RATE_MS) {
     return;
   }
-  lastUpdate = millis();
-  
-  u8x8.clear();
-  (*drawFunctions[functionIdx])();
-  functionIdx++;
-  if (functionIdx >= sizeof(drawFunctions)/sizeof(drawFunctions[0])) {
-      functionIdx = 0;
-  }
+  lastUpdate = now;
 
+  u8x8.clear();
+  
+  int num_funcs = sizeof(drawFunctions)/sizeof(drawFunctions[0]);
+  int functionIdx = random8(num_funcs);
+
+  (*drawFunctions[functionIdx])();
 }
 
 
